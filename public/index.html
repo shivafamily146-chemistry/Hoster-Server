@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101827"><title>Hoster Server</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar"><div class="brand"><span class="brand-mark">H</span><div><strong>Hoster Server</strong><small>MINECRAFT CONTROL PANEL</small></div></div><button id="logout" class="secondary hidden">Sign out</button></header>
+    <section id="loginView" class="login card">
+      <p class="eyebrow">WELCOME BACK</p><h1>Manage your servers.</h1><p class="muted">Sign in to your private hosting dashboard.</p>
+      <form id="loginForm"><label for="password">Dashboard password</label><input id="password" type="password" autocomplete="current-password" required><button class="primary" type="submit">Sign in</button></form><p id="loginError" class="error"></p>
+    </section>
+    <section id="dashboardView" class="hidden">
+      <div class="welcome"><div><p class="eyebrow">CONTROL CENTER</p><h1>Your Minecraft servers</h1><p class="muted">Manage servers connected to your Pterodactyl panel.</p></div><button id="refresh" class="secondary">Refresh</button></div>
+      <div id="notice" class="notice hidden"></div><div id="servers" class="server-grid"></div>
+      <p class="footnote">Server controls are sent securely through the configured panel API. Console access is coming next.</p>
+    </section>
+  </main><script src="/app.js"></script>
+</body></html>
