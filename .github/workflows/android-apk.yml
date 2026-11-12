@@ -21,7 +21,7 @@ jobs:
         shell: bash
         run: |
           SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
-          SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager 2>/dev/null | sort -V | tail -n 1)"
+          SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -name sdkmanager 2>/dev/null | sort -V | tail -n 1)"
           if [ -z "$SDKMANAGER" ]; then
             echo "sdkmanager not found under $SDK_ROOT/cmdline-tools"
             exit 1
