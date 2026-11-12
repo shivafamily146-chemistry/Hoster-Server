@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         getWindow().setStatusBarColor(bg); getWindow().setNavigationBarColor(bg);
-        prefs=getSharedPreferences("hoster_bedrock",MODE_PRIVATE);
+        prefs=getSharedPreferences("hoster_java",MODE_PRIVATE);
         buildShell(); showHome();
     }
     private TextView text(String s,int size,int color,boolean bold) {
@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
     private void buildShell() {
         root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setPadding(20,22,20,16); root.setBackgroundColor(bg);
         root.addView(text("HOSTER SERVER",24,white,true));
-        root.addView(text("FREE BEDROCK HOSTING • NO VPS",12,accent,true));
+        root.addView(text("JAVA EDITION HOSTING • NO VPS",12,accent,true));
         LinearLayout nav=new LinearLayout(this); nav.setOrientation(LinearLayout.HORIZONTAL);
         Button home=button("Home"), add=button("Add Server"); home.setOnClickListener(v->showHome()); add.setOnClickListener(v->showAddDialog());
         nav.addView(home,new LinearLayout.LayoutParams(0,-2,1)); nav.addView(add,new LinearLayout.LayoutParams(0,-2,1)); root.addView(nav);
@@ -48,10 +48,10 @@ public class MainActivity extends Activity {
     }
     private void showHome() {
         content.removeAllViews();
-        content.addView(text("Your Bedrock servers",20,white,true));
+        content.addView(text("Your Java servers",20,white,true));
         content.addView(text("No VPS is needed for this app setup. Create a free server with a provider, then save its address and port here.",14,muted,false));
-        addProvider("Aternos — Free Bedrock hosting","Create a free Bedrock server on Aternos. Start it on the Aternos website, then copy the address and port into this app.","https://aternos.org/");
-        addProvider("Minehut — Free Java/Bedrock network","Create a free Minehut server. Bedrock mobile players can join through the Minehut Bedrock address; this is a shared network, not a standalone Bedrock-only server.","https://www.minehut.com/");
+        addProvider("Aternos — Free Java hosting","Create a free Java Edition server on Aternos. Start it on the Aternos website, then copy the assigned address and port into this app.","https://aternos.org/");
+        addProvider("Minehut — Free Java hosting","Create a free Java server on Minehut. Start it on the Minehut website, then save the server address and assigned port here.","https://www.minehut.com/");
         Button add=button("＋ Add my server IP / Port"); add.setOnClickListener(v->showAddDialog()); content.addView(add);
         content.addView(text("Saved servers",18,white,true));
         JSONArray arr=readServers();
@@ -73,9 +73,9 @@ public class MainActivity extends Activity {
         LinearLayout form=new LinearLayout(this); form.setPadding(12,8,12,4); form.setOrientation(LinearLayout.VERTICAL);
         EditText name=new EditText(this); name.setSingleLine(true); name.setHint("Server name");
         EditText address=new EditText(this); address.setSingleLine(true); address.setHint("Server address / IP");
-        EditText port=new EditText(this); port.setSingleLine(true); port.setInputType(2); port.setHint("Port (Bedrock default: 19132)");
+        EditText port=new EditText(this); port.setSingleLine(true); port.setInputType(2); port.setHint("Port (Java default: 25565)");
         form.addView(name); form.addView(address); form.addView(port);
-        new AlertDialog.Builder(this).setTitle("Add Bedrock server").setView(form)
+        new AlertDialog.Builder(this).setTitle("Add Java server").setView(form)
           .setNegativeButton("Cancel",null).setPositiveButton("Save",(d,w)->{
             String n=name.getText().toString().trim(), a=address.getText().toString().trim(), p=port.getText().toString().trim();
             if(n.isEmpty()||a.isEmpty()||p.isEmpty()){ status.setText("Enter server name, address and port."); return; }
@@ -84,15 +84,15 @@ public class MainActivity extends Activity {
           }).show();
     }
     private void addServerCard(JSONObject item) {
-        String name=item.optString("name","Minecraft Server"), address=item.optString("address",""), port=String.valueOf(item.optInt("port",19132));
+        String name=item.optString("name","Minecraft Server"), address=item.optString("address",""), port=String.valueOf(item.optInt("port",25565));
         LinearLayout card=new LinearLayout(this); card.setOrientation(LinearLayout.VERTICAL); card.setPadding(15,12,15,12); card.setBackgroundColor(panel);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2); lp.bottomMargin=12; content.addView(card,lp);
         card.addView(text(name,17,white,true)); card.addView(text("Address: "+address,14,white,false)); card.addView(text("Port: "+port,14,white,false));
         LinearLayout actions=new LinearLayout(this); actions.setOrientation(LinearLayout.HORIZONTAL);
-        Button copy=button("Copy address"), join=button("Open Minecraft"), remove=button("Delete");
+        Button copy=button("Copy address"), join=button("Join on PC"), remove=button("Delete");
         actions.addView(copy,new LinearLayout.LayoutParams(0,-2,1)); actions.addView(join,new LinearLayout.LayoutParams(0,-2,1)); actions.addView(remove,new LinearLayout.LayoutParams(0,-2,1)); card.addView(actions);
-        copy.setOnClickListener(v->{ ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE); cm.setPrimaryClip(ClipData.newPlainText("Bedrock server",address+":"+port)); status.setText("Address and port copied."); });
-        join.setOnClickListener(v->{ try { Intent launch=getPackageManager().getLaunchIntentForPackage("com.mojang.minecraftpe"); if(launch==null)throw new Exception(); startActivity(launch); status.setText("Minecraft opened. Add this address in Play → Servers → Add Server."); } catch(Exception e){ status.setText("Install Minecraft Bedrock to join."); } });
+        copy.setOnClickListener(v->{ ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE); cm.setPrimaryClip(ClipData.newPlainText("Java server",address+":"+port)); status.setText("Address and port copied."); });
+        join.setOnClickListener(v->{ new AlertDialog.Builder(this).setTitle("Join Java server on PC").setMessage("Open Minecraft: Java Edition on your PC. Select Multiplayer → Add Server.\n\nServer Address: "+address+"\nPort: "+port+"\n\nIf the provider gives a hostname with a port suffix, use that exact address.").setPositiveButton("Copy address",(d,w)->{ ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE); cm.setPrimaryClip(ClipData.newPlainText("Java server",address+(port.equals("25565")?"":":"+port))); status.setText("Java server address copied."); }).setNegativeButton("Close",null).show(); });
         remove.setOnClickListener(v->{ JSONArray old=readServers(), next=new JSONArray(); for(int i=0;i<old.length();i++){ JSONObject x=old.optJSONObject(i); if(x!=null && !(x.optString("name").equals(name)&&x.optString("address").equals(address)&&String.valueOf(x.optInt("port")).equals(port)))next.put(x); } saveServers(next); showHome(); status.setText("Server removed."); });
     }
 }
